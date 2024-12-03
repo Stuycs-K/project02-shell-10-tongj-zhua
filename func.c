@@ -11,6 +11,8 @@ void parse_args(char *buffer, char ** arg_ary){
         arg_ary[i] = strsep(&curr, " ");
         i++; 
     }
+    int size = strlen(arg_ary[i-1]);
+    arg_ary[i-1][size-1] = '\0';
     arg_ary[i] = NULL; 
 }
 
@@ -28,9 +30,10 @@ void func(){
         } else if (p1 == 0){
             execvp(arg_ary[0], arg_ary);
             exit(0);
-        } 
-        int status; 
-        wait(&status); 
+        } else{
+            int status; 
+            wait(&status); 
+        }
     }
 }
 
