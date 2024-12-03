@@ -4,6 +4,9 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
+//arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
+//returns void 
+//parses arguments of command line input
 void parse_args(char *buffer, char ** arg_ary){
     char *curr = buffer; 
     int i = 0; 
@@ -16,9 +19,26 @@ void parse_args(char *buffer, char ** arg_ary){
     arg_ary[i] = NULL; 
 }
 
+//arguments: char *shortprompt is a pointer to an empty char array
+//returns void 
+//shortens path by using ~ for home directory 
+void prompt(char * shortprompt){
+    char prompt[256]; 
+    getcwd(prompt, 256); 
+    char *homedir = getenv("HOME"); 
+    shortprompt[0] = '~';
+    for (int i = 1; prompt[i + strlen(homedir) - 1]; i++){
+        shortprompt[i] = prompt[i + strlen(homedir) - 1];
+    }
+}
+
+//no arguments, returns void 
+//general functionality: prompts user, forks and executes command
 void func(){
     while (1){
-        printf("Input: "); 
+        char shortprompt[256]; 
+        prompt(shortprompt);
+        printf("%s $", shortprompt); 
         char buffer[1000]; 
         fgets(buffer, 1000, stdin); 
         char * arg_ary[10]; 
@@ -34,9 +54,10 @@ void func(){
             int status; 
             wait(&status); 
         }
+        fflush(stdout); 
     }
 }
 
 int main(){
-    func(); 
+    func();
 }
