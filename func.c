@@ -40,7 +40,9 @@ void func(){
         prompt(shortprompt);
         printf("%s $", shortprompt); 
         char buffer[1000]; 
-        fgets(buffer, 1000, stdin); 
+        if (!fgets(buffer, 1000, stdin)){
+            exit(0);
+        }
         char * arg_ary[10]; 
         parse_args(buffer, arg_ary); 
         pid_t p1 = fork(); 
@@ -48,7 +50,6 @@ void func(){
             perror("forkfail"); 
             exit(1); 
         } else if (p1 == 0){
-            if (strcmp(arg_ary[0], "exit"))
             execvp(arg_ary[0], arg_ary);
             exit(0);
         } else{
