@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include "cwd.h"
 
 //arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
 //returns void 
@@ -36,21 +37,20 @@ void prompt(char * shortprompt){
 //general functionality: prompts user, forks and executes command
 void func(){
     while (1){
-        char shortprompt[256]; 
+        char shortprompt[256]; char buffer[1000]; char * arg_ary[10]; 
         prompt(shortprompt);
         printf("%s $", shortprompt); 
-        char buffer[1000]; 
-        if (!fgets(buffer, 1000, stdin)){
-            exit(0);
-        }
-        char * arg_ary[10]; 
+        if (!fgets(buffer, 1000, stdin)) exit(0);
         parse_args(buffer, arg_ary); 
         pid_t p1 = fork(); 
         if (p1 < 0){
             perror("forkfail"); 
             exit(1); 
         } else if (p1 == 0){
-            execvp(arg_ary[0], arg_ary);
+            if (!strcmp(arg_ary[0], "cd")){
+                cd(arg_ary[1]);
+            } 
+            else execvp(arg_ary[0], arg_ary);
             exit(0);
         } else{
             if (!strcmp(arg_ary[0], "exit")){
