@@ -48,9 +48,13 @@ void func(){
             perror("forkfail"); 
             exit(1); 
         } else if (p1 == 0){
+            if (strcmp(arg_ary[0], "exit"))
             execvp(arg_ary[0], arg_ary);
             exit(0);
         } else{
+            if (!strcmp(arg_ary[0], "exit")){
+                exit(2);
+            }
             int status; 
             wait(&status); 
         }
