@@ -9,5 +9,5 @@ void cd(char * path){ // changes directory to path (relative to current)
     getcwd(newcwd, 256);
     strcat(newcwd, "/");
     strcat(newcwd, path);
-    chdir(newcwd); 
+    chdir(newcwd);  
 }
