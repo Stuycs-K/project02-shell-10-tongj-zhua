@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "cwd.h"
 
-int cd(char * path){ // changes directory to path (relative to current)
+void cd(char * path){ // changes directory to path (relative to current)
     char * newcwd=malloc(256);
     getcwd(newcwd, 256);
     strcat(newcwd, "/");
     strcat(newcwd, path);
-    chdir(newcwd);
+    chdir(newcwd);  
 }
