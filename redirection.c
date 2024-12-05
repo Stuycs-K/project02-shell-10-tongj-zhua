@@ -39,6 +39,6 @@ void rd_stdin(char * command){ // back text goes into front
 
 
 int main(){
-    char  test[256]= "ls>c.txt";
-    rd_stdout(test);
+    char  test[256]= "cat<c.txt";
+    rd_stdin(test);
 }
