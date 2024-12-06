@@ -7,15 +7,15 @@
 #include "redirection.h"
 
 //arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
-//returns void 
+//returns 1 if arg_ary contains <, >, or |
 //parses arguments of command line input
-void parse_args(char *buffer, char ** arg_ary){
+int parse_args(char *buffer, char ** arg_ary){
     char *curr = buffer; 
     int val = 0; 
     int i = 0; 
     while (curr){
         arg_ary[i] = strsep(&curr, " ");
-        if ((arg_ary[i] == '<') || (arg_ary[i] == '>') || (arg_ary[i] == '|')){
+        if ((* arg_ary[i] == '<') || (*arg_ary[i] == '>') || (*arg_ary[i] == '|')){
             val = 1; 
         }
         i++; 
