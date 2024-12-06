@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <fcntl.h>
 // arguments: char * command is line with >
 // return: void
 // redirects stdout of left to right
@@ -57,3 +58,25 @@ void rd_stdin(char * command){ // back text goes into front
     dup2(backup_stdin, STDIN_FILENO);
 }
 
+void rd_pipes(char * command){
+    char * front;
+    char * back = command;
+    front = strsep(&back, "|");
+    open("test.txt", O_WRONLY | O_CREAT | O_TRUNC, 0611);
+    char in[256]; 
+    strcpy(in, front);
+    strcat(in, ">"); 
+    strcat(in, "test.txt");
+    rd_stdout(in); 
+
+    char out[256]; 
+    strcpy(out, front); 
+    strcat(out, "<"); 
+    strcat(out, "test.txt"); 
+    rd_stdin(out); 
+}
+
+int main(){
+    char str[256] = "ls|cat";
+    rd_pipes(str);
+}

@@ -4,20 +4,26 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include "cwd.h"
+#include "redirection.h"
 
 //arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
 //returns void 
 //parses arguments of command line input
 void parse_args(char *buffer, char ** arg_ary){
     char *curr = buffer; 
+    int val = 0; 
     int i = 0; 
     while (curr){
         arg_ary[i] = strsep(&curr, " ");
+        if ((arg_ary[i] == '<') || (arg_ary[i] == '>') || (arg_ary[i] == '|')){
+            val = 1; 
+        }
         i++; 
     }
     int size = strlen(arg_ary[i-1]);
     arg_ary[i-1][size-1] = '\0';
-    arg_ary[i] = NULL; 
+    arg_ary[i] = NULL;
+    return val;  
 }
 
 //arguments: char *shortprompt is a pointer to an empty char array
