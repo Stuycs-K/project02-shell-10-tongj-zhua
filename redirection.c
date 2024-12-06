@@ -56,6 +56,9 @@ void rd_stdin(char * command){ // back text goes into front
     dup2(backup_stdin, STDIN_FILENO);
 }
 
+// arguments: char * command is line with |
+// return: void
+// redirects stdout of left to be stdin of right
 void rd_pipes(char * command){
     char front[256]; char back[256];
     sscanf(command, "%s | %s", front, back);
@@ -72,6 +75,19 @@ void rd_pipes(char * command){
     strcat(out, "test.txt"); 
     rd_stdin(out); 
 }
+
+// arguments: char ** arg_ary is parsed arguments
+// return: int
+// returns whether or not the command is redirection
+int is_redirect(char ** arg_ary){
+    for (int i = 0; arg_ary[i]; i++){
+        if ((arg_ary[i] = '<') || (arg_ary[i] = '>') || (arg_ary[i] = '|')){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 
 int main(){
     char str[256] = "ls | cat"; 
