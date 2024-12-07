@@ -85,8 +85,3 @@ int is_redirect(char * val){
     else if (val = '|') return 3; 
     return 0;
 }
-
-int main(){
-    char str[256] = "ls | cat"; 
-    rd_pipes(str);
-}
