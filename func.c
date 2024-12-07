@@ -48,6 +48,7 @@ void func(){
         prompt(shortprompt);
         printf("%s $", shortprompt); 
         free(shortprompt);
+        fflush(stdout);
         if (!fgets(buffer, 1000, stdin)) exit(0);
         parse_args(buffer, arg_ary); 
         if (!strcmp(arg_ary[0], "exit")) exit(0);

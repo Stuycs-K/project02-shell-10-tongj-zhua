@@ -79,15 +79,12 @@ void rd_pipes(char * command){
 // arguments: char ** arg_ary is parsed arguments
 // return: int
 // returns whether or not the command is redirection
-int is_redirect(char ** arg_ary){
-    for (int i = 0; arg_ary[i]; i++){
-        if ((arg_ary[i] = '<') || (arg_ary[i] = '>') || (arg_ary[i] = '|')){
-            return 1;
-        }
-    }
+int is_redirect(char * val){
+    if (val = '<') return 1;
+    else if (val = '>') return 2; 
+    else if (val = '|') return 3; 
     return 0;
 }
-
 
 int main(){
     char str[256] = "ls | cat"; 
