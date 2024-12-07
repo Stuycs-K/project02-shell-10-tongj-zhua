@@ -4,18 +4,14 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <fcntl.h>
-// arguments: char * command is line with >
+// arguments: char ** arg_ary with 2 char pointers to program name and file to use as stdout
 // return: void
 // redirects stdout of left to right
-void rd_stdout(char * command){ // front text goes into back
-    char front[256]; char back[256];
-    sscanf(command, "%s > %s", front, back);
-    int fdback = open(back, O_WRONLY);
+void rd_stdout(char ** arg_ary){ // front text goes into back
+    int fdback = open(arg_ary[1], O_WRONLY);
     int backup_stdout = dup(STDOUT_FILENO);
-    char * arg_ary[2];
-    arg_ary[0]=front;
-    arg_ary[1]=NULL;
     dup2(fdback, STDOUT_FILENO);
+    arg_ary[1]=NULL;
 
     pid_t p1 = fork(); 
     if (p1 < 0){
@@ -30,19 +26,15 @@ void rd_stdout(char * command){ // front text goes into back
     dup2(backup_stdout, STDOUT_FILENO);
 }
 
-// arguments: char * command is line with <
+// arguments: char ** arg_ary with 2 char pointers to program name and file to use as stdin
 // return: void
 // redirects stdin of left to right
-void rd_stdin(char * command){ // back text goes into front
-    char front[256]; char back[256];
-    sscanf(command, "%s < %s", front, back);
-    int fdback = open(back, O_RDONLY);
+void rd_stdin(char ** arg_ary){ // back text goes into front
+    int fdback = open(arg_ary[1], O_RDONLY);
     int backup_stdin = dup(STDIN_FILENO);
-    char * arg_ary[2];
-    arg_ary[0]=front;
-    arg_ary[1]=NULL;
     dup2(fdback, STDIN_FILENO);
-    execvp(arg_ary[0], arg_ary);
+    arg_ary[1]=NULL; 
+
     pid_t p1 = fork(); 
     if (p1 < 0){
         perror("forkfail"); 
@@ -56,32 +48,48 @@ void rd_stdin(char * command){ // back text goes into front
     dup2(backup_stdin, STDIN_FILENO);
 }
 
-// arguments: char * command is line with |
+// arguments: char ** arg_ary with 2 char pointers to program names for pipe 
 // return: void
 // redirects stdout of left to be stdin of right
-void rd_pipes(char * command){
-    char front[256]; char back[256];
-    sscanf(command, "%s | %s", front, back);
+void rd_pipes(char ** arg_ary){
     open("test.txt", O_WRONLY | O_CREAT | O_TRUNC, 0611);
-    char in[256]; 
-    strcpy(in, front);
-    strcat(in, " > "); 
-    strcat(in, "test.txt");
-    rd_stdout(in); 
-
-    char out[256]; 
-    strcpy(out, front); 
-    strcat(out, " < "); 
-    strcat(out, "test.txt"); 
-    rd_stdin(out); 
+    char * args[3]; 
+    args[0] = arg_ary[0]; 
+    args[1] = "test.txt"; 
+    args[2] = NULL; 
+    rd_stdout(args); 
+    args[0] = arg_ary[1]; 
+    args[1] = "test.txt"; 
+    args[2] = NULL; 
+    rd_stdin(args); 
 }
 
-// arguments: char ** arg_ary is parsed arguments
-// return: int
-// returns whether or not the command is redirection
-int is_redirect(char * val){
-    if (val = '<') return 1;
-    else if (val = '>') return 2; 
-    else if (val = '|') return 3; 
-    return 0;
+// // arguments: char ** arg_ary is parsed arguments
+// // return: int
+// // returns whether or not the command is redirection
+// char is_redirect(char * val){
+//     if ((val == '<') || (val == '>') || (val = '|')) return val;
+//     return 0;
+// }
+
+void redirectme(char ** arg_ary){ 
+    for (int i = 0; arg_ary[i];i++){ 
+        char **args = (char **)malloc(4 * sizeof(char *)); 
+        if (arg_ary[i+1][0] == '<'){
+            
+        }
+    } 
+}
+
+int main(){
+    char * arg_ary[3]; 
+    arg_ary[0] = "ls"; 
+    arg_ary[1] = "test.txt"; 
+    arg_ary[2] = NULL;
+    rd_stdout(arg_ary);
+    arg_ary[0] = "cat"; 
+    arg_ary[1] = "test.txt"; 
+    arg_ary[2] = NULL;
+    rd_stdin(arg_ary); 
+    // redirectme(arg_ary);
 }
