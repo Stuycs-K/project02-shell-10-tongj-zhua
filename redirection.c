@@ -143,24 +143,24 @@ void rd_pipes(char * command){
 // return: int 1 or 0 indicating whether the command has >, <, or | 
 // calls redirection if in command
 int is_redirect(char * command){
-    int i = 0; 
+    int val = 0; 
     for (int i = 0; command[i]; i++){
         if (command[i] == '|'){
             rd_pipes(command); 
-            i = 1; 
+            val = 1; 
         }
     }
-    if (!i){
+    if (!val){
         for (int i = 0; command[i]; i++){
             if (command[i] == '<'){
                 rd_stdin(command);
-                i = 1; 
+                val = 1; 
             }
             if (command[i] == '>'){
                 rd_stdout(command);
-                i = 1; 
+                val = 1; 
             }
         }
     }
-    return i;
+    return val;
 }
