@@ -20,6 +20,9 @@ void prompt(char * shortprompt){
     }
 }
 
+//arguments: char * buffer is the command
+//returns void 
+//executes the command (redirect, cd, general func) 
 void execcommand(char * buffer){
     char * arg_ary[10];
     int a = is_redirect(buffer);
@@ -55,7 +58,6 @@ void func(){
         free(shortprompt);
         fflush(stdout);
         if (!fgets(wholebuffer, 1000, stdin)) exit(0);
-        char * buffer=wholebuffer;
         if(strchr(wholebuffer, ';')!=NULL){
             char * curr = wholebuffer;
             char * buffer;
@@ -67,6 +69,7 @@ void func(){
             execcommand(curr);
         }
         else{
+            char * buffer=wholebuffer;
             execcommand(buffer);
         }
         }
