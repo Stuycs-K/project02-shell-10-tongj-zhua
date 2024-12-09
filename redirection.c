@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <fcntl.h>
-
+#include <sys/wait.h>
 
 //arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
 //return: void
