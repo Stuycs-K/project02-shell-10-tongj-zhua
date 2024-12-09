@@ -3,23 +3,23 @@
  (Janet Tong & Ashley Zhu)
  Team Name: Zhu You Know Whats Tong??? 
 
-####Features Our Shell Implements: 
+#### Features Our Shell Implements: 
 general functionality, working directory, prompt, exiting, simple redirection and pipes
 
-####Unsuccessful Features Attempted: 
+#### Unsuccessful Features Attempted: 
 handling multiple pipes and redirects 
 
-####Function Headers:
-######In cwd.c:
+#### Function Headers:
+###### In cwd.c:
 void cd(char * path)
 
-#######In func.c:
+###### In func.c:
 void prompt(char * shortprompt)
 void execcommand(char * buffer)
 void func()
 int main()
 
-#######In redirection.c:
+###### In redirection.c:
 void parse_args(char *buffer, char ** arg_ary)
 void rd_stdout(char * command)
 void rd_stdin(char * command)
