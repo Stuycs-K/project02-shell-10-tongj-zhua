@@ -1,13 +1,14 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Tfg6waJb)
 # Systems Project2 - MyShell
  (Janet Tong & Ashley Zhu)
-Features Our Shell Implements:
+Features Our Shell Implements: general functionality, working directory, prompt, exiting, simple redirection and pipes
 
-Unsuccessful Features Attempted:
+Unsuccessful Features Attempted: handling multiple pipes and redirects 
 
-Bugs to be Aware of:
+Bugs to be Aware of: 
 
 Function Headers:
+
 In cwd.c:
 void cd(char * path)
 
