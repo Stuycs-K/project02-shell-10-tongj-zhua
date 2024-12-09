@@ -51,7 +51,6 @@ void func(){
                 }
             }
         }
-        fflush(stdout);
     }
 }
 
