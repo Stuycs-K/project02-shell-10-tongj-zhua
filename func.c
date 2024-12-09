@@ -6,25 +6,6 @@
 #include "cwd.h"
 #include "redirection.h"
 
-//arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
-//returns 1 if arg_ary contains <, >, or |
-//parses arguments of command line input
-int parse_args(char *buffer, char ** arg_ary){
-    char *curr = buffer; 
-    int val = 0; 
-    int i = 0; 
-    while (curr){
-        arg_ary[i] = strsep(&curr, " ");
-        if ((* arg_ary[i] == '<') || (*arg_ary[i] == '>') || (*arg_ary[i] == '|')){
-            val = 1; 
-        }
-        i++; 
-    }
-    int size = strlen(arg_ary[i-1]);
-    arg_ary[i-1][size-1] = '\0';
-    arg_ary[i] = NULL;
-    return val;  
-}
 
 //arguments: char *shortprompt is a pointer to an empty char array
 //returns void 
@@ -55,7 +36,7 @@ void func(){
         else if (!strcmp(arg_ary[0], "cd")){
             cd(arg_ary[1]); 
         }
-        else if (!(redirectme(arg_ary))){
+        else{
             pid_t p1 = fork(); 
             if (p1 < 0){
                 perror("forkfail"); 

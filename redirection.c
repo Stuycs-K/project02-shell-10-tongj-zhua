@@ -5,18 +5,38 @@
 #include <fcntl.h>
 #include <fcntl.h>
 
+
+//arguments: char *buffer is line reading in, char ** arg_ary holds arguments of line 
+//return: void
+//parses arguments of command line input
+void parse_args(char *buffer, char ** arg_ary){
+    int size = strlen(buffer); 
+    if (buffer[size-1] == '\n') buffer[size-1] = '\0';
+    char *curr = buffer; 
+    int i = 0; 
+    while (curr){
+        arg_ary[i] = strsep(&curr, " ");
+        i++; 
+    }
+    arg_ary[i] = NULL;
+}
+
 // arguments: char * command is line with >
 // return: void 
 // redirects stdout to file in line
 void rd_stdout(char * command){ // front text goes into back
     char front[256]; char back[256];
-    sscanf(command, "%s > %s", front, back);
-    int fdback = open(back, O_WRONLY);
+    sscanf(command, "%[^>]> %s", front, back);
+    int size = strlen(front); 
+    front[size -1] = '\0';
+
+    char * arg_ary[10];
+    parse_args(front, arg_ary);
+
+    int fdback = open(back, O_WRONLY, 0);
     int backup_stdout = dup(STDOUT_FILENO);
     dup2(fdback, STDOUT_FILENO);
-    char * arg_ary[2];
-    arg_ary[0]=front;
-    arg_ary[1]=NULL;
+
     pid_t p1 = fork(); 
     if (p1 < 0){
         perror("forkfail"); 
@@ -27,6 +47,7 @@ void rd_stdout(char * command){ // front text goes into back
         int status; 
         wait(&status); 
     }
+
     dup2(backup_stdout, STDOUT_FILENO);
 }
 
@@ -35,14 +56,17 @@ void rd_stdout(char * command){ // front text goes into back
 // redirects stdin to file in line
 void rd_stdin(char * command){ // back text goes into front
     char front[256]; char back[256];
-    sscanf(command, "%s < %s", front, back);
+    sscanf(command, "%[^<]< %s", front, back);
+    int size = strlen(front); 
+    front[size -1] = '\0';
+
+    char * arg_ary[10];
+    parse_args(front, arg_ary);
+
     int fdback = open(back, O_RDONLY);
     int backup_stdin = dup(STDIN_FILENO);
     dup2(fdback, STDIN_FILENO);
-    char * arg_ary[2];
-    arg_ary[0]=front;
-    arg_ary[1]=NULL;
-    
+
     pid_t p1 = fork(); 
     if (p1 < 0){
         perror("forkfail"); 
@@ -53,6 +77,7 @@ void rd_stdin(char * command){ // back text goes into front
         int status; 
         wait(&status); 
     }
+
     dup2(backup_stdin, STDIN_FILENO);
 }
 
@@ -61,7 +86,9 @@ void rd_stdin(char * command){ // back text goes into front
 // redirects stdout of left to be stdin of right
 void rd_pipes(char * command){
     char front[256]; char back[256]; 
-    sscanf(command, "%[^|] | %[^0-9]", front, back);
+    sscanf(command, "%[^|]| %[^0-9]", front, back);
+    int size = strlen(front); 
+    front[size -1] = '\0';
     char prog1[256];
     char file1[256];
     int backup_stdin; 
@@ -69,14 +96,16 @@ void rd_pipes(char * command){
     for (int i = 0; front[i];i++){
         if (front[i] == '<'){
             val = 0; 
-            sscanf(front, "%[^<] < %s", prog1, file1);
+            sscanf(front, "%[^<]< %s", prog1, file1);
+            int size = strlen(prog1); 
+            prog1[size -1] = '\0';
             int fdback = open(file1, O_RDONLY);
             backup_stdin = dup(STDIN_FILENO);
             dup2(fdback, STDIN_FILENO);
         }
     }
     if (val) strcpy(prog1, front); 
-    open("temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0611);
+    open("temp.txt", O_RDWR | O_CREAT | O_TRUNC, 0611);
     strcat(prog1, " > temp.txt");
     rd_stdout(prog1); 
     dup2(backup_stdin, STDIN_FILENO); 
@@ -87,8 +116,10 @@ void rd_pipes(char * command){
     for (int i = 0; back[i];i++){
         if (back[i] == '>'){
             val = 0; 
-            sscanf(back, "%[^>] > %s", prog2, file2); 
-            int fdback = open(file2, O_RDONLY);
+            sscanf(back, "%[^>]> %s", prog2, file2);
+            int size = strlen(prog2); 
+            prog2[size -1] = '\0';
+            int fdback = open(file2, O_WRONLY);
             backup_stdout = dup(STDOUT_FILENO);
             dup2(fdback, STDOUT_FILENO);
         }
@@ -115,10 +146,3 @@ void rd_pipes(char * command){
     }
 }
 
-int main(){
-    char * command = "cowsay < test.txt | cat > out.txt"; 
-    char * command4 = "ls | cat > out.txt";
-    char * command2 = "cowsay < test.txt | cat";
-    char * command3 = "ls | cat";
-    rd_pipes(command); 
-}
