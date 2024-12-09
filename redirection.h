@@ -1,7 +1,6 @@
 #ifndef REDIRECTION_H
 #define REDIRECTION_H
-int rd_stdout(char * file);
-int rd_stdin(char * file);
-int rd_pipes(char * command);
-void redirectme(char ** arg_ary);
+void rd_stdout(char * command);
+void rd_stdin(char * command);
+void rd_pipes(char * command);
 #endif

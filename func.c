@@ -55,7 +55,7 @@ void func(){
         else if (!strcmp(arg_ary[0], "cd")){
             cd(arg_ary[1]); 
         }
-        else{
+        else if (!(redirectme(arg_ary))){
             pid_t p1 = fork(); 
             if (p1 < 0){
                 perror("forkfail"); 
