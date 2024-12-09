@@ -7,5 +7,5 @@ cwd.o: cwd.c cwd.h
 redirection.o: redirection.c redirection.h
 	@gcc -c redirection.c
 clean:
-	rm *o
-	rm program
+	rm -f *o
+	rm -f program

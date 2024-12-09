@@ -20,18 +20,9 @@ void prompt(char * shortprompt){
     }
 }
 
-//no arguments, returns void 
-//general functionality: prompts user, forks and executes command
-void func(){
-    while (1){
-        char * shortprompt=malloc(256);
-        char buffer[1000]; char * arg_ary[10]; 
-        prompt(shortprompt);
-        printf("%s $", shortprompt); 
-        free(shortprompt);
-        fflush(stdout);
-        if (!fgets(buffer, 1000, stdin)) exit(0);
-        int a = is_redirect(buffer);
+void execcommand(char * buffer){
+    char * arg_ary[10];
+    int a = is_redirect(buffer);
         if (!a){
             parse_args(buffer, arg_ary); 
             if (!strcmp(arg_ary[0], "exit")) exit(0);
@@ -51,7 +42,34 @@ void func(){
                 }
             }
         }
-    }
+}
+
+//no arguments, returns void 
+//general functionality: prompts user, forks and executes command
+void func(){
+    while (1){
+        char * shortprompt=malloc(256);
+        char wholebuffer[1000]; 
+        prompt(shortprompt);
+        printf("%s $", shortprompt); 
+        free(shortprompt);
+        fflush(stdout);
+        if (!fgets(wholebuffer, 1000, stdin)) exit(0);
+        char * buffer=wholebuffer;
+        if(strchr(wholebuffer, ';')!=NULL){
+            char * curr = wholebuffer;
+            char * buffer;
+            while(strchr(curr, ';')!=NULL){
+                buffer = strsep(&curr, ";");
+                execcommand(buffer);
+            }
+            buffer = curr;
+            execcommand(curr);
+        }
+        else{
+            execcommand(buffer);
+        }
+        }
 }
 
 int main(){
