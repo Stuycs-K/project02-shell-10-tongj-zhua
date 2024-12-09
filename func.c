@@ -31,23 +31,27 @@ void func(){
         free(shortprompt);
         fflush(stdout);
         if (!fgets(buffer, 1000, stdin)) exit(0);
-        parse_args(buffer, arg_ary); 
-        if (!strcmp(arg_ary[0], "exit")) exit(0);
-        else if (!strcmp(arg_ary[0], "cd")){
-            cd(arg_ary[1]); 
-        }
-        else{
-            pid_t p1 = fork(); 
-            if (p1 < 0){
-                perror("forkfail"); 
-                exit(1); 
-            } else if (p1 == 0){
-                execvp(arg_ary[0], arg_ary);
-            } else{
-                int status; 
-                wait(&status); 
+        int a = is_redirect(buffer);
+        if (!a){
+            parse_args(buffer, arg_ary); 
+            if (!strcmp(arg_ary[0], "exit")) exit(0);
+            else if (!strcmp(arg_ary[0], "cd")){
+                cd(arg_ary[1]); 
+            }
+            else{
+                pid_t p1 = fork(); 
+                if (p1 < 0){
+                    perror("forkfail"); 
+                    exit(1); 
+                } else if (p1 == 0){
+                    execvp(arg_ary[0], arg_ary);
+                } else{
+                    int status; 
+                    wait(&status); 
+                }
             }
         }
+        fflush(stdout);
     }
 }
 

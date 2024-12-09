@@ -24,7 +24,7 @@ void parse_args(char *buffer, char ** arg_ary){
 // arguments: char * command is line with >
 // return: void 
 // redirects stdout to file in line
-void rd_stdout(char * command){ // front text goes into back
+void rd_stdout(char * command){ 
     char front[256]; char back[256];
     sscanf(command, "%[^>]> %s", front, back);
     int size = strlen(front); 
@@ -89,10 +89,7 @@ void rd_pipes(char * command){
     sscanf(command, "%[^|]| %[^0-9]", front, back);
     int size = strlen(front); 
     front[size -1] = '\0';
-    char prog1[256];
-    char file1[256];
-    int backup_stdin; 
-    int val = 1; 
+    char prog1[256]; char file1[256]; int backup_stdin; int val = 1; 
     for (int i = 0; front[i];i++){
         if (front[i] == '<'){
             val = 0; 
@@ -109,10 +106,7 @@ void rd_pipes(char * command){
     strcat(prog1, " > temp.txt");
     rd_stdout(prog1); 
     dup2(backup_stdin, STDIN_FILENO); 
-    char prog2[256];
-    char file2[256];
-    int backup_stdout; 
-    val = 1; 
+    char prog2[256]; char file2[256]; int backup_stdout; val = 1; 
     for (int i = 0; back[i];i++){
         if (back[i] == '>'){
             val = 0; 
@@ -129,7 +123,6 @@ void rd_pipes(char * command){
     rd_stdin(prog2); 
     dup2(backup_stdout, STDOUT_FILENO); 
 
-//removing temp
     char * arg_ary[3]; 
     arg_ary[0] = "rm"; 
     arg_ary[1] = "temp.txt"; 
@@ -146,3 +139,28 @@ void rd_pipes(char * command){
     }
 }
 
+// arguments: char * command is that redirects
+// return: int 1 or 0 indicating whether the command has >, <, or | 
+// calls redirection if in command
+int is_redirect(char * command){
+    int i = 0; 
+    for (int i = 0; command[i]; i++){
+        if (command[i] == '|'){
+            rd_pipes(command); 
+            i = 1; 
+        }
+    }
+    if (!i){
+        for (int i = 0; command[i]; i++){
+            if (command[i] == '<'){
+                rd_stdin(command);
+                i = 1; 
+            }
+            if (command[i] == '>'){
+                rd_stdout(command);
+                i = 1; 
+            }
+        }
+    }
+    return i;
+}
